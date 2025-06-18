@@ -1,0 +1,39 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:layout_marginEnd="8dp"
+    android:background="#1E1E1E">
+
+    <ImageView
+        android:id="@+id/elementImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/element_image_background_light"
+        android:clipToOutline="true" />
+
+    <TextView
+        android:id="@+id/elementName"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:text="Nom"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/elementCalories"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="123 kcal"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:gravity="bottom"
+        android:textColor="#BBBBBB"/>
+</LinearLayout>
