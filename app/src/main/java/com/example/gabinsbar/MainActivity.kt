@@ -11,11 +11,25 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.json.JSONException
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var verticalRecyclerView: RecyclerView
     private lateinit var queue: RequestQueue
+
+    private lateinit var AccountFab: FloatingActionButton
+    private lateinit var CartFab: FloatingActionButton
+    private lateinit var pseudoEditText: EditText
+    private lateinit var passwordEditText: EditText
 
     private val categoryMap = mutableMapOf<String, Category>()
 
@@ -31,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     private var loadedCount = 0
     private val totalCategories = 6
+    lateinit var pseudo_utilisateur: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +53,16 @@ class MainActivity : AppCompatActivity() {
 
         verticalRecyclerView = findViewById(R.id.verticalRecyclerView)
         verticalRecyclerView.layoutManager = LinearLayoutManager(this)
+        AccountFab = findViewById(R.id.AccountFab)
+        CartFab = findViewById(R.id.CartFab)
+        pseudo_utilisateur = findViewById(R.id.pseudo_utilisateur)
+        pseudoEditText = findViewById(R.id.pseudoEditText)
+        passwordEditText = findViewById(R.id.passwordEditText)
+
+
+        if (SessionManager.pseudo != "") {
+            pseudo_utilisateur.text = SessionManager.pseudo
+        }
 
         loadCategory(siropsUrl, "Sirops", "kcal")
         loadCategory(classiquesUrl, "Classiques", "%")
@@ -46,6 +71,38 @@ class MainActivity : AppCompatActivity() {
         loadCategory(cafesUrl, "Cafés", "")
         loadCategory(thesUrl, "Thés", "")
         loadCategory(softsUrl, "Softs", "kcal")
+
+        CartFab.setOnClickListener {
+            Toast.makeText(this, "Cart", Toast.LENGTH_SHORT).show()
+        }
+
+        AccountFab.setOnClickListener {
+            Toast.makeText(this, "Account", Toast.LENGTH_SHORT).show()
+
+            val builder = AlertDialog.Builder(this)
+            val view = LayoutInflater.from(this).inflate(R.layout.dialog_login, null)
+            val pseudo = pseudoEditText.text.toString()
+            val password = passwordEditText.text.toString()
+
+            builder.setView(view)
+                .setTitle("Connexion")
+                .setPositiveButton("Se connecter") { _, _ ->
+                    if (pseudo.isNotEmpty() && password.isNotEmpty()) {
+                        //val hashedPassword = hashSHA256(password)
+                        val hashedPassword = password
+
+                        sendLoginRequest(pseudo, hashedPassword)
+                    } else {
+                        Toast.makeText(this, "Veuillez remplir tous les champs.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton("Annuler") { _, _ ->
+                    Toast.makeText(this, "Annulation de la connexion.", Toast.LENGTH_SHORT).show()
+                }
+
+            builder.create()
+
+        }
     }
 
     private fun loadCategory(url: String, title: String, suffix: String, retryCount: Int = 0) {
@@ -54,18 +111,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         val request = StringRequest(Request.Method.GET, url, { response ->
-            println("DEBUG loadCategory $title response: $response")
             val elements = parseElements(response, suffix)
-            println("DEBUG $title elements size: ${elements.size}")
             categoryMap[title] = Category(title, elements)
             loadedCount++
             maybeUpdateRecycler()
         }, { error ->
             if (retryCount < 2) {
-                println("DEBUG Erreur $title, retry $retryCount: ${error.message}")
                 Handler(Looper.getMainLooper()).postDelayed({
                     loadCategory(url, title, suffix, retryCount + 1)
-                }, 500)  // délai de 500 ms avant de relancer
+                }, 500)
             } else {
                 Toast.makeText(this, "Erreur $title : ${error.message}", Toast.LENGTH_LONG).show()
                 loadedCount++
@@ -102,9 +156,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun maybeUpdateRecycler() {
         if (loadedCount == totalCategories) {
-            categoryMap.forEach { (title, category) ->
-                println("DEBUG Category: $title - elements size: ${category.elements.size}")
-            }
             // Générer les suggestions dans le même ordre que categoryOrder
             val suggestions = categoryOrder
                 .filter { it != "Suggestions" }
@@ -117,5 +168,38 @@ class MainActivity : AppCompatActivity() {
 
             verticalRecyclerView.adapter = MasterCategoryAdapter(orderedCategories)
         }
+    }
+
+    private fun sendLoginRequest(pseudo: String, hashedPassword: String) {
+        val url = "use/your/api/Api_gabinsbar/connexionUtilisateur.php"
+        val queue = Volley.newRequestQueue(this)
+
+        val urlWithParams = "$url?pseudo=$pseudo&mot_de_passe=$hashedPassword"
+
+        val stringRequest = StringRequest(
+            Request.Method.GET, urlWithParams,
+            { response ->
+                try {
+                    val jsonResponse = JSONObject(response)
+                    val status = jsonResponse.getString("status")
+                    val message = jsonResponse.getString("message")
+
+                    if (status == "success") {
+                        Toast.makeText(this, "Connexion réussie!", Toast.LENGTH_SHORT).show()
+                        SessionManager.isLoggedIn = true
+                        SessionManager.pseudo = pseudo
+                    } else {
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: JSONException) {
+                    Toast.makeText(this, "Erreur de format de réponse.", Toast.LENGTH_SHORT).show()
+                }
+            },
+            { error ->
+                Toast.makeText(this, "Erreur: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        queue.add(stringRequest)
     }
 }

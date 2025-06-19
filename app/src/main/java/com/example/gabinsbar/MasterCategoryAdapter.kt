@@ -24,7 +24,11 @@ class MasterCategoryAdapter(private var categories: List<Category>) :
 
     override fun onBindViewHolder(holder: MasterCategoryViewHolder, position: Int) {
         val category = categories[position]
-        holder.title.text = category.title
+        holder.title.text = if (category.title != "Suggestions") {
+            "${category.title} (${category.elements.size})"
+        } else {
+            category.title
+        }
         holder.horizontalRecyclerView.layoutManager =
             LinearLayoutManager(holder.itemView.context, RecyclerView.HORIZONTAL, false)
 

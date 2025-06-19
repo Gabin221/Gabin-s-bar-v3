@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/pseudoEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="pseudo1"
+        android:hint="Pseudo" />
+
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Mot de passe"
+        android:inputType="textPassword"
+        android:text="mdp"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>
