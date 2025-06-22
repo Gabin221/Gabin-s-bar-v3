@@ -8,6 +8,8 @@
         android:id="@+id/pseudoEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:autofillHints="name"
+        android:inputType="text"
         android:text="pseudo1"
         android:hint="Pseudo" />
 
@@ -17,6 +19,7 @@
         android:layout_height="wrap_content"
         android:hint="Mot de passe"
         android:inputType="textPassword"
+        android:autofillHints="password"
         android:text="mdp"
         android:layout_marginTop="8dp"/>
 </LinearLayout>

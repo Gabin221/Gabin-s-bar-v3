@@ -28,8 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var AccountFab: FloatingActionButton
     private lateinit var CartFab: FloatingActionButton
-    private lateinit var pseudoEditText: EditText
-    private lateinit var passwordEditText: EditText
 
     private val categoryMap = mutableMapOf<String, Category>()
 
@@ -45,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     private var loadedCount = 0
     private val totalCategories = 6
-    lateinit var pseudo_utilisateur: TextView
+    private lateinit var pseudo_utilisateur: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +54,6 @@ class MainActivity : AppCompatActivity() {
         AccountFab = findViewById(R.id.AccountFab)
         CartFab = findViewById(R.id.CartFab)
         pseudo_utilisateur = findViewById(R.id.pseudo_utilisateur)
-        pseudoEditText = findViewById(R.id.pseudoEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
 
 
         if (SessionManager.pseudo != "") {
@@ -77,10 +73,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         AccountFab.setOnClickListener {
-            Toast.makeText(this, "Account", Toast.LENGTH_SHORT).show()
-
             val builder = AlertDialog.Builder(this)
             val view = LayoutInflater.from(this).inflate(R.layout.dialog_login, null)
+            val pseudoEditText = view.findViewById<EditText>(R.id.pseudoEditText)
+            val passwordEditText = view.findViewById<EditText>(R.id.passwordEditText)
+
             val pseudo = pseudoEditText.text.toString()
             val password = passwordEditText.text.toString()
 
@@ -100,7 +97,9 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Annulation de la connexion.", Toast.LENGTH_SHORT).show()
                 }
 
-            builder.create()
+            val dialog = builder.create()
+            dialog.show()
+
 
         }
     }
@@ -188,6 +187,8 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this, "Connexion réussie!", Toast.LENGTH_SHORT).show()
                         SessionManager.isLoggedIn = true
                         SessionManager.pseudo = pseudo
+
+                        pseudo_utilisateur.text = "Bienvenue ${SessionManager.pseudo} !"
                     } else {
                         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                     }
