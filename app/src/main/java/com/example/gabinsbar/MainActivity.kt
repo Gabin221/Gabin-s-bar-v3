@@ -239,7 +239,7 @@ class MainActivity : AppCompatActivity() {
                 val commande = PanierManager.getPanier().joinToString(separator = "\n    - ") { it.name }
                 val texte = "${SessionManager.pseudo} aimerait bien:\n    - $commande"
                 val texteEncode = URLEncoder.encode(texte, "UTF-8")
-                val url = "https://api.telegram.org/bot7120496261:AAEjIPlWcFiWfTMuacnPJRVMmtklvZEe0YM/sendMessage?chat_id=6718593235&text=${texteEncode}"
+                val url = "use/your/api&text=${texteEncode}"
 
                 val params = JSONObject()
 
