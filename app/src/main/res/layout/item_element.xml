@@ -23,7 +23,7 @@
         android:scaleType="centerCrop"
         android:text="Nom"
         android:textAlignment="center"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:textColor="#FFFFFF"
         android:layout_marginTop="4dp"/>
 
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="123 kcal"
-        android:textSize="12sp"
+        android:textSize="11sp"
         android:textAlignment="center"
         android:gravity="bottom"
         android:textColor="#BBBBBB"/>

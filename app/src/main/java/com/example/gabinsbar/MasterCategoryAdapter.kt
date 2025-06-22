@@ -15,6 +15,7 @@ class MasterCategoryAdapter(private var categories: List<Category>, private val 
         val title: TextView = view.findViewById(R.id.categoryTitle)
         val horizontalRecyclerView: RecyclerView = view.findViewById(R.id.horizontalRecyclerView)
         val refreshButton: ImageButton = view.findViewById(R.id.refreshSuggestionsButton)
+        val nbrInCategory: TextView = view.findViewById(R.id.nbrInCategory)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MasterCategoryViewHolder {
@@ -24,11 +25,7 @@ class MasterCategoryAdapter(private var categories: List<Category>, private val 
 
     override fun onBindViewHolder(holder: MasterCategoryViewHolder, position: Int) {
         val category = categories[position]
-        holder.title.text = if (category.title != "Suggestions") {
-            "${category.title} (${category.elements.size})"
-        } else {
-            category.title
-        }
+        holder.title.text = category.title
         holder.horizontalRecyclerView.layoutManager =
             LinearLayoutManager(holder.itemView.context, RecyclerView.HORIZONTAL, false)
 
@@ -50,9 +47,12 @@ class MasterCategoryAdapter(private var categories: List<Category>, private val 
             holder.refreshButton.setOnClickListener {
                 (holder.itemView.context as? MainActivity)?.refreshSuggestions()
             }
+            holder.nbrInCategory.visibility = View.GONE
         } else {
             holder.refreshButton.visibility = View.GONE
             holder.refreshButton.setOnClickListener(null)
+            holder.nbrInCategory.visibility = View.VISIBLE
+            holder.nbrInCategory.text = "(${category.elements.size})"
         }
     }
 

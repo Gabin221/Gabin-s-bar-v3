@@ -13,11 +13,14 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.android.volley.toolbox.JsonObjectRequest
+import com.example.gabinsbar.PanierManager.vider
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONException
@@ -72,19 +75,42 @@ class MainActivity : AppCompatActivity() {
         loadCategory(softsUrl, "Softs", "kcal")
 
         CartFab.setOnClickListener {
-            val items = PanierManager.getPanier()
+            val items = PanierManager.getPanier().toMutableList()
+
             if (items.isEmpty()) {
                 Toast.makeText(this, "Panier vide", Toast.LENGTH_SHORT).show()
             } else {
-                val message = items.joinToString(separator = "\n - ") { it.name }
-                AlertDialog.Builder(this)
-                    .setTitle("Panier")
-                    .setMessage(message)
+                val listView = ListView(this)
+                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, items.map { it.name }.toMutableList())
+                listView.adapter = adapter
+
+                val dialog = AlertDialog.Builder(this)
+                    .setTitle("Votre panier")
+                    .setView(listView)
                     .setPositiveButton("Commander") { _, _ ->
                         envoyerCommande()
                     }
-                    .setNegativeButton("Fermer", null)
-                    .show()
+                    .setNegativeButton("Vider le panier") { _, _ ->
+                        vider()
+                    }
+                    .create()
+
+                listView.setOnItemClickListener { _, _, position, _ ->
+                    val elementSupprime = items[position]
+                    PanierManager.supprimer(elementSupprime)
+                    items.removeAt(position)
+                    adapter.remove(adapter.getItem(position))
+                    adapter.notifyDataSetChanged()
+
+                    Toast.makeText(this, "${elementSupprime.name} supprimé du panier", Toast.LENGTH_SHORT).show()
+
+                    if (items.isEmpty()) {
+                        dialog.dismiss()
+                        Toast.makeText(this, "Panier vidé", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                dialog.show()
             }
         }
 
@@ -100,24 +126,33 @@ class MainActivity : AppCompatActivity() {
             builder.setView(view)
                 .setTitle("Connexion")
                 .setPositiveButton("Se connecter") { _, _ ->
-                    if (pseudo.isNotEmpty() && password.isNotEmpty()) {
-                        //val hashedPassword = hashSHA256(password)
-                        val hashedPassword = password
-
-                        sendLoginRequest(pseudo, hashedPassword)
+                    if(SessionManager.isLoggedIn) {
+                        Toast.makeText(this, "Vous êtes déjà connecté.", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
                     } else {
-                        Toast.makeText(this, "Veuillez remplir tous les champs.", Toast.LENGTH_SHORT).show()
+                        if (pseudo.isNotEmpty() && password.isNotEmpty()) {
+                            //val hashedPassword = hashSHA256(password)
+                            val hashedPassword = password
+
+                            sendLoginRequest(pseudo, hashedPassword)
+                        } else {
+                            Toast.makeText(this, "Veuillez remplir tous les champs.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
                 .setNegativeButton("Annuler") { _, _ ->
-                    Toast.makeText(this, "Annulation de la connexion.", Toast.LENGTH_SHORT).show()
+                    // L'utilisateur a annulé la connexion
                 }
                 builder.setNeutralButton("Se déconnecter") { _, _ ->
-                    Toast.makeText(this, "Déconnexion effectuée", Toast.LENGTH_SHORT).show()
-                    // Code pour déconnecter l'utilisateur
-                    pseudo_utilisateur.text = "Vous n'êtes pas connecté."
-                    SessionManager.isLoggedIn = false
-                    SessionManager.pseudo = ""
+                    if(SessionManager.isLoggedIn){
+                        Toast.makeText(this, "Déconnexion effectuée", Toast.LENGTH_SHORT).show()
+                        pseudo_utilisateur.text = "Vous n'êtes pas connecté."
+                        SessionManager.isLoggedIn = false
+                        SessionManager.pseudo = ""
+                    } else {
+                        Toast.makeText(this, "Vous n'étiez pas connecté.", Toast.LENGTH_SHORT).show()
+                        return@setNeutralButton
+                    }
                 }
 
             val dialog = builder.create()
@@ -191,8 +226,13 @@ class MainActivity : AppCompatActivity() {
             val orderedCategories = categoryOrder.mapNotNull { categoryMap[it] }
 
             verticalRecyclerView.adapter = MasterCategoryAdapter(orderedCategories) { element ->
-                PanierManager.ajouter(element)
-                Toast.makeText(this, "${element.name} ajouté au panier", Toast.LENGTH_SHORT).show()
+                val success = PanierManager.ajouter(element)
+                if (success) {
+                    Toast.makeText(this, "${element.name} ajouté au panier", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "${element.name} est déjà dans le panier", Toast.LENGTH_SHORT).show()
+                }
+
             }
 
         }
@@ -265,5 +305,4 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Vous devez vous connecter pour passer commande", Toast.LENGTH_SHORT).show()
         }
     }
-
 }
