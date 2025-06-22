@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONException
@@ -96,11 +97,18 @@ class MainActivity : AppCompatActivity() {
                 .setNegativeButton("Annuler") { _, _ ->
                     Toast.makeText(this, "Annulation de la connexion.", Toast.LENGTH_SHORT).show()
                 }
+                builder.setNeutralButton("Se déconnecter") { _, _ ->
+                    Toast.makeText(this, "Déconnexion effectuée", Toast.LENGTH_SHORT).show()
+                    // Code pour déconnecter l'utilisateur
+                    pseudo_utilisateur.text = "Vous n'êtes pas connecté."
+                }
 
             val dialog = builder.create()
             dialog.show()
 
-
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark))
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setTextColor(ContextCompat.getColor(this, android.R.color.system_surface_dark))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_light))
         }
     }
 
