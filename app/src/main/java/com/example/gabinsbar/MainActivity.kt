@@ -101,6 +101,8 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Déconnexion effectuée", Toast.LENGTH_SHORT).show()
                     // Code pour déconnecter l'utilisateur
                     pseudo_utilisateur.text = "Vous n'êtes pas connecté."
+                    SessionManager.isLoggedIn = false
+                    SessionManager.pseudo = ""
                 }
 
             val dialog = builder.create()
