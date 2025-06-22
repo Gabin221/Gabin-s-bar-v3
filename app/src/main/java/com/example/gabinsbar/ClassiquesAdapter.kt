@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class ClassiquesAdapter(private val elements: List<Element>) :
+class ClassiquesAdapter(private val elements: List<Element>, private val onItemClick: (Element) -> Unit) :
     RecyclerView.Adapter<ClassiquesAdapter.ClassiquesViewHolder>() {
 
     class ClassiquesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -27,6 +27,9 @@ class ClassiquesAdapter(private val elements: List<Element>) :
         holder.name.text = element.name
         holder.info.text = element.extraInfo
         Glide.with(holder.itemView).load(element.imageUrl).into(holder.image)
+        holder.itemView.setOnClickListener {
+            onItemClick(element)
+        }
     }
 
     override fun getItemCount() = elements.size

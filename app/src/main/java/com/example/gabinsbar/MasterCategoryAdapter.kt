@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class MasterCategoryAdapter(private var categories: List<Category>) :
+class MasterCategoryAdapter(private var categories: List<Category>, private val onItemClick: (Element) -> Unit) :
     RecyclerView.Adapter<MasterCategoryAdapter.MasterCategoryViewHolder>() {
 
     class MasterCategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -33,15 +33,16 @@ class MasterCategoryAdapter(private var categories: List<Category>) :
             LinearLayoutManager(holder.itemView.context, RecyclerView.HORIZONTAL, false)
 
         val adapter = when (category.title) {
-            "Sirops" -> SiropsAdapter(category.elements)
-            "Classiques" -> ClassiquesAdapter(category.elements)
-            "Extravagants" -> ExtravagantsAdapter(category.elements)
-            "Bières" -> BieresAdapter(category.elements)
-            "Cafés" -> CafesAdapter(category.elements)
-            "Thés" -> ThesAdapter(category.elements)
-            "Softs" -> SoftsAdapter(category.elements)
-            else -> ElementAdapter(category.elements)
+            "Sirops" -> SiropsAdapter(category.elements, onItemClick)
+            "Classiques" -> ClassiquesAdapter(category.elements, onItemClick)
+            "Extravagants" -> ExtravagantsAdapter(category.elements, onItemClick)
+            "Bières" -> BieresAdapter(category.elements, onItemClick)
+            "Cafés" -> CafesAdapter(category.elements, onItemClick)
+            "Thés" -> ThesAdapter(category.elements, onItemClick)
+            "Softs" -> SoftsAdapter(category.elements, onItemClick)
+            else -> ElementAdapter(category.elements, onItemClick)
         }
+
         holder.horizontalRecyclerView.adapter = adapter
 
         if (category.title.trim() == "Suggestions") {

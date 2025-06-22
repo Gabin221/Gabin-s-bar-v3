@@ -17,10 +17,12 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import com.android.volley.toolbox.JsonObjectRequest
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONException
 import org.json.JSONObject
+import java.net.URLEncoder
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,13 +34,13 @@ class MainActivity : AppCompatActivity() {
 
     private val categoryMap = mutableMapOf<String, Category>()
 
-    private val siropsUrl = "use/your/api/Api_gabinsbar/recupererSirops.php"
-    private val classiquesUrl = "use/your/api/Api_gabinsbar/recupererClassiques.php"
-    private val extravagantsUrl = "use/your/api/Api_gabinsbar/recupererExtravagants.php"
-    private val bieresUrl = "use/your/api/Api_gabinsbar/recupererBieres.php"
-    private val cafesUrl = "use/your/api/Api_gabinsbar/recupererCafes.php"
-    private val thesUrl = "use/your/api/Api_gabinsbar/recupererThes.php"
-    private val softsUrl = "use/your/api/Api_gabinsbar/recupererSofts.php"
+    private val siropsUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererSirops.php"
+    private val classiquesUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererClassiques.php"
+    private val extravagantsUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererExtravagants.php"
+    private val bieresUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererBieres.php"
+    private val cafesUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererCafes.php"
+    private val thesUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererThes.php"
+    private val softsUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererSofts.php"
 
     private val categoryOrder = listOf("Suggestions", "Sirops", "Bières", "Classiques", "Extravagants", "Softs", "Cafés", "Thés")
 
@@ -70,7 +72,20 @@ class MainActivity : AppCompatActivity() {
         loadCategory(softsUrl, "Softs", "kcal")
 
         CartFab.setOnClickListener {
-            Toast.makeText(this, "Cart", Toast.LENGTH_SHORT).show()
+            val items = PanierManager.getPanier()
+            if (items.isEmpty()) {
+                Toast.makeText(this, "Panier vide", Toast.LENGTH_SHORT).show()
+            } else {
+                val message = items.joinToString(separator = "\n - ") { it.name }
+                AlertDialog.Builder(this)
+                    .setTitle("Panier")
+                    .setMessage(message)
+                    .setPositiveButton("Commander") { _, _ ->
+                        envoyerCommande()
+                    }
+                    .setNegativeButton("Fermer", null)
+                    .show()
+            }
         }
 
         AccountFab.setOnClickListener {
@@ -175,12 +190,16 @@ class MainActivity : AppCompatActivity() {
             // Construire la liste finale dans le bon ordre
             val orderedCategories = categoryOrder.mapNotNull { categoryMap[it] }
 
-            verticalRecyclerView.adapter = MasterCategoryAdapter(orderedCategories)
+            verticalRecyclerView.adapter = MasterCategoryAdapter(orderedCategories) { element ->
+                PanierManager.ajouter(element)
+                Toast.makeText(this, "${element.name} ajouté au panier", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 
     private fun sendLoginRequest(pseudo: String, hashedPassword: String) {
-        val url = "use/your/api/Api_gabinsbar/connexionUtilisateur.php"
+        val url = "https://gabinserrurot.fr/Api_gabinsbar/connexionUtilisateur.php"
         val queue = Volley.newRequestQueue(this)
 
         val urlWithParams = "$url?pseudo=$pseudo&mot_de_passe=$hashedPassword"
@@ -213,4 +232,38 @@ class MainActivity : AppCompatActivity() {
 
         queue.add(stringRequest)
     }
+
+    private fun envoyerCommande() {
+        if (SessionManager.isLoggedIn) {
+            try {
+                val commande = PanierManager.getPanier().joinToString(separator = "\n    - ") { it.name }
+                val texte = "${SessionManager.pseudo} aimerait bien:\n    - $commande"
+                val texteEncode = URLEncoder.encode(texte, "UTF-8")
+                val url = "https://api.telegram.org/bot7120496261:AAEjIPlWcFiWfTMuacnPJRVMmtklvZEe0YM/sendMessage?chat_id=6718593235&text=${texteEncode}"
+
+                val params = JSONObject()
+
+                val request = JsonObjectRequest(
+                    Request.Method.POST, url, params,
+                    { response ->
+                        response.toString()
+                    },
+                    { error ->
+                        error.message
+                    }
+                )
+
+                Volley.newRequestQueue(this).add(request)
+
+                val message = "La commande a bien été envoyée"
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
+            } catch (e: Exception) {
+                Toast.makeText(this, "Erreur lors de l'envoi de la commande: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Vous devez vous connecter pour passer commande", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }
