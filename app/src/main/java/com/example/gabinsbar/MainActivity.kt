@@ -21,7 +21,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.gabinsbar.PanierManager.vider
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import android.view.animation.AnimationUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONException
 import org.json.JSONObject
@@ -61,6 +61,9 @@ class MainActivity : AppCompatActivity() {
         CartFab = findViewById(R.id.CartFab)
         pseudo_utilisateur = findViewById(R.id.pseudo_utilisateur)
 
+        val accountFab: View = findViewById(R.id.AccountFab)
+        val pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_pulse)
+        accountFab.startAnimation(pulseAnimation)
 
         if (SessionManager.pseudo != "") {
             pseudo_utilisateur.text = SessionManager.pseudo
@@ -135,6 +138,7 @@ class MainActivity : AppCompatActivity() {
                             val hashedPassword = password
 
                             sendLoginRequest(pseudo, hashedPassword)
+                            accountFab.clearAnimation()
                         } else {
                             Toast.makeText(this, "Veuillez remplir tous les champs.", Toast.LENGTH_SHORT).show()
                         }
@@ -146,9 +150,10 @@ class MainActivity : AppCompatActivity() {
                 builder.setNeutralButton("Se déconnecter") { _, _ ->
                     if(SessionManager.isLoggedIn){
                         Toast.makeText(this, "Déconnexion effectuée", Toast.LENGTH_SHORT).show()
-                        pseudo_utilisateur.text = "Vous n'êtes pas connecté."
+                        pseudo_utilisateur.text = ""
                         SessionManager.isLoggedIn = false
                         SessionManager.pseudo = ""
+                        accountFab.startAnimation(pulseAnimation)
                     } else {
                         Toast.makeText(this, "Vous n'étiez pas connecté.", Toast.LENGTH_SHORT).show()
                         return@setNeutralButton
