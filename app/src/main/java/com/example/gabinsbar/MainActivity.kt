@@ -42,13 +42,13 @@ class MainActivity : AppCompatActivity() {
 
     private val categoryMap = mutableMapOf<String, Category>()
 
-    private val siropsUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererSirops.php"
-    private val classiquesUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererClassiques.php"
-    private val extravagantsUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererExtravagants.php"
-    private val bieresUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererBieres.php"
-    private val cafesUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererCafes.php"
-    private val thesUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererThes.php"
-    private val softsUrl = "https://gabinserrurot.fr/Api_gabinsbar/recupererSofts.php"
+    private val siropsUrl = "use/your/api/Api_gabinsbar/recupererSirops.php"
+    private val classiquesUrl = "use/your/api/Api_gabinsbar/recupererClassiques.php"
+    private val extravagantsUrl = "use/your/api/Api_gabinsbar/recupererExtravagants.php"
+    private val bieresUrl = "use/your/api/Api_gabinsbar/recupererBieres.php"
+    private val cafesUrl = "use/your/api/Api_gabinsbar/recupererCafes.php"
+    private val thesUrl = "use/your/api/Api_gabinsbar/recupererThes.php"
+    private val softsUrl = "use/your/api/Api_gabinsbar/recupererSofts.php"
 
     private val categoryOrder = listOf("Suggestions", "Sirops", "Bières", "Classiques", "Extravagants", "Softs", "Cafés", "Thés")
 
@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sendCreateAccountRequest(pseudo: String, hashedPassword: String) {
-        val url = "https://gabinserrurot.fr/Api_gabinsbar/creer_compte.php"
+        val url = "use/your/api/Api_gabinsbar/creer_compte.php"
         val request = object : StringRequest(Method.POST, url,
             Response.Listener { response ->
                 Toast.makeText(this, "Compte créé avec succès", Toast.LENGTH_SHORT).show()
@@ -291,7 +291,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendLoginRequest(pseudo: String, hashedPassword: String) {
-        val url = "https://gabinserrurot.fr/Api_gabinsbar/connexionUtilisateur.php"
+        val url = "use/your/api/Api_gabinsbar/connexionUtilisateur.php"
         val queue = Volley.newRequestQueue(this)
 
         val urlWithParams = "$url?pseudo=$pseudo&mot_de_passe=$hashedPassword"
