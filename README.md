@@ -29,13 +29,13 @@
     Telegram Bot API
 
 ## 📂 Structure générale
-Côté Android
+### Côté Android
 
     app/src/main/ : code Kotlin, layouts XML, ressources
 
     app/build.gradle : configuration de l'application
 
-Côté API
+### Côté API
 
     Api_gabinsbar/connexionUtilisateur.php : connexion utilisateur
 
@@ -54,14 +54,14 @@ git clone https://github.com/ton-pseudo/Gabin-s-bar-v3.git
 2️⃣ Ouvre dans Android Studio
 
 3️⃣ Build & Run sur appareil ou émulateur
-API
+## API
 
 1️⃣ Déploie Api_gabinsbar/ sur ton serveur web compatible PHP
 
 2️⃣ Configure param2.inc.php pour l’accès MySQL
 
 3️⃣ Vérifie le bon fonctionnement via un navigateur ou Postman
-🌐 Exemple d'API
+## 🌐 Exemple d'API
 
     GET /Api_gabinsbar/recupererBieres.php
 
