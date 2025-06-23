@@ -1,6 +1,6 @@
-# Gabin's Bar v3
+# Gabin's Bar
 
-🍹 Gabin's Bar v3 est une application Android connectée à un backend PHP/MySQL. Elle permet de gérer un bar : prise de commandes, gestion du panier et communication avec un bot Telegram.
+🍹 Gabin's Bar est une application Android connectée à un backend PHP/MySQL. Elle permet de gérer un bar : prise de commandes, gestion du panier et communication avec un bot Telegram.
 
 ## 🚀 Fonctionnalités principales
 
