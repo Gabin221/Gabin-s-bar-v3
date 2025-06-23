@@ -1,31 +1,36 @@
 package com.example.gabinsbar
 
+import SessionManager
+import android.graphics.Color
+import android.graphics.Typeface.BOLD
 import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Request
-import com.android.volley.RequestQueue
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.gabinsbar.PanierManager.vider
-import android.view.animation.AnimationUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONException
 import org.json.JSONObject
 import java.net.URLEncoder
+import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {
 
@@ -83,26 +88,26 @@ class MainActivity : AppCompatActivity() {
             if (items.isEmpty()) {
                 Toast.makeText(this, "Panier vide", Toast.LENGTH_SHORT).show()
             } else {
-                val listView = ListView(this)
-                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, items.map { it.name }.toMutableList())
+                val builder = AlertDialog.Builder(this)
+                val view = LayoutInflater.from(this).inflate(R.layout.dialog_panier, null)
+                val listView = view.findViewById<ListView>(R.id.panierListView)
+                val btnCommander = view.findViewById<TextView>(R.id.dialogCommanderBtn)
+                val btnVider = view.findViewById<TextView>(R.id.dialogViderBtn)
+
+                val itemNames = items.map { it.name }.toMutableList()
+                val adapter = ArrayAdapter(this, R.layout.list_item, R.id.text_view, itemNames)
                 listView.adapter = adapter
 
-                val dialog = AlertDialog.Builder(this)
-                    .setTitle("Votre panier")
-                    .setView(listView)
-                    .setPositiveButton("Commander") { _, _ ->
-                        envoyerCommande()
-                    }
-                    .setNegativeButton("Vider le panier") { _, _ ->
-                        vider()
-                    }
-                    .create()
+                builder.setView(view)
+
+                val dialog = builder.create()
+                dialog.show()
 
                 listView.setOnItemClickListener { _, _, position, _ ->
                     val elementSupprime = items[position]
                     PanierManager.supprimer(elementSupprime)
                     items.removeAt(position)
-                    adapter.remove(adapter.getItem(position))
+                    itemNames.removeAt(position)
                     adapter.notifyDataSetChanged()
 
                     Toast.makeText(this, "${elementSupprime.name} supprimé du panier", Toast.LENGTH_SHORT).show()
@@ -112,8 +117,15 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this, "Panier vidé", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-                dialog.show()
+                btnCommander.setOnClickListener {
+                    envoyerCommande()
+                    vider()
+                    dialog.dismiss()
+                }
+                btnVider.setOnClickListener {
+                    vider()
+                    dialog.dismiss()
+                }
             }
         }
 
@@ -122,51 +134,86 @@ class MainActivity : AppCompatActivity() {
             val view = LayoutInflater.from(this).inflate(R.layout.dialog_login, null)
             val pseudoEditText = view.findViewById<EditText>(R.id.pseudoEditText)
             val passwordEditText = view.findViewById<EditText>(R.id.passwordEditText)
-
-            val pseudo = pseudoEditText.text.toString()
-            val password = passwordEditText.text.toString()
+            val dialogLoginBtn = view.findViewById<TextView>(R.id.dialogLoginBtn)
+            val dialogCancelBtn = view.findViewById<TextView>(R.id.dialogCancelBtn)
+            val dialogDisconnectBtn = view.findViewById<TextView>(R.id.dialogDisconnectBtn)
+            val dialogCreateAccountBtn = view.findViewById<TextView>(R.id.dialogCreateAccountBtn)
 
             builder.setView(view)
-                .setTitle("Connexion")
-                .setPositiveButton("Se connecter") { _, _ ->
-                    if(SessionManager.isLoggedIn) {
-                        Toast.makeText(this, "Vous êtes déjà connecté.", Toast.LENGTH_SHORT).show()
-                        return@setPositiveButton
-                    } else {
-                        if (pseudo.isNotEmpty() && password.isNotEmpty()) {
-                            //val hashedPassword = hashSHA256(password)
-                            val hashedPassword = password
-
-                            sendLoginRequest(pseudo, hashedPassword)
-                            accountFab.clearAnimation()
-                        } else {
-                            Toast.makeText(this, "Veuillez remplir tous les champs.", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-                .setNegativeButton("Annuler") { _, _ ->
-                    // L'utilisateur a annulé la connexion
-                }
-                builder.setNeutralButton("Se déconnecter") { _, _ ->
-                    if(SessionManager.isLoggedIn){
-                        Toast.makeText(this, "Déconnexion effectuée", Toast.LENGTH_SHORT).show()
-                        pseudo_utilisateur.text = ""
-                        SessionManager.isLoggedIn = false
-                        SessionManager.pseudo = ""
-                        accountFab.startAnimation(pulseAnimation)
-                    } else {
-                        Toast.makeText(this, "Vous n'étiez pas connecté.", Toast.LENGTH_SHORT).show()
-                        return@setNeutralButton
-                    }
-                }
 
             val dialog = builder.create()
             dialog.show()
 
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark))
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setTextColor(ContextCompat.getColor(this, android.R.color.system_surface_dark))
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_light))
+            dialogLoginBtn.setOnClickListener {
+                val pseudo = pseudoEditText.text.toString()
+                val password = passwordEditText.text.toString()
+
+                if (SessionManager.isLoggedIn) {
+                    Toast.makeText(this, "Vous êtes déjà connecté.", Toast.LENGTH_SHORT).show()
+                } else {
+                    if (pseudo.isNotEmpty() && password.isNotEmpty()) {
+                        val hashedPassword = hashSHA256(password)
+                        sendLoginRequest(pseudo, hashedPassword)
+                        accountFab.clearAnimation()
+                        dialog.dismiss()
+                    } else {
+                        Toast.makeText(this, "Veuillez remplir tous les champs.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            dialogCancelBtn.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialogDisconnectBtn.setOnClickListener {
+                if(SessionManager.isLoggedIn){
+                    Toast.makeText(this, "Déconnexion effectuée", Toast.LENGTH_SHORT).show()
+                    pseudo_utilisateur.text = ""
+                    SessionManager.isLoggedIn = false
+                    SessionManager.pseudo = ""
+                    accountFab.startAnimation(pulseAnimation)
+                    dialog.dismiss()
+                } else {
+                    Toast.makeText(this, "Vous n'étiez pas connecté.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            dialogCreateAccountBtn.setOnClickListener {
+                val pseudo = pseudoEditText.text.toString()
+                val password = passwordEditText.text.toString()
+
+                if (pseudo.isNotEmpty() && password.isNotEmpty()) {
+                    val hashedPassword = hashSHA256(password)
+                    sendCreateAccountRequest(pseudo, hashedPassword)
+                    dialog.dismiss()
+                } else {
+                    Toast.makeText(this, "Veuillez remplir tous les champs.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
+    }
+
+    fun sendCreateAccountRequest(pseudo: String, hashedPassword: String) {
+        val url = "https://gabinserrurot.fr/Api_gabinsbar/creer_compte.php"
+        val request = object : StringRequest(Method.POST, url,
+            Response.Listener { response ->
+                Toast.makeText(this, "Compte créé avec succès", Toast.LENGTH_SHORT).show()
+            },
+            Response.ErrorListener {
+                Toast.makeText(this, "Erreur lors de la création du compte", Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["pseudo"] = pseudo
+                params["password"] = hashedPassword
+                return params
+            }
+        }
+        Volley.newRequestQueue(this).add(request)
+    }
+
+
+    private fun hashSHA256(password: String): String {
+        val bytes = MessageDigest.getInstance("SHA-256").digest(password.toByteArray())
+        return bytes.joinToString("") { "%02x".format(it) }
     }
 
     private fun loadCategory(url: String, title: String, suffix: String, retryCount: Int = 0) {

@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#222222"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Votre panier"
+        android:textColor="#FFFFFF"
+        android:textSize="23sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <ListView
+        android:id="@+id/panierListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#222222"
+        android:padding="4dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/dialogViderBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vider"
+            android:textColor="#F44336"
+            android:textSize="16sp"
+            android:padding="12dp" />
+
+        <TextView
+            android:id="@+id/dialogCommanderBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Commander"
+            android:textColor="#4CAF50"
+            android:textSize="16sp"
+            android:padding="12dp" />
+
+    </LinearLayout>
+</LinearLayout>

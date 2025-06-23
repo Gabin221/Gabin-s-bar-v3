@@ -1,25 +1,85 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="20dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="#222222">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connexion"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginBottom="16dp"/>
 
     <EditText
         android:id="@+id/pseudoEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:autofillHints="name"
+        android:hint="Pseudo"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#BBBBBB"
         android:inputType="text"
-        android:text="pseudo1"
-        android:hint="Pseudo" />
+        android:background="@drawable/edittext_background"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"/>
 
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Mot de passe"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#BBBBBB"
         android:inputType="textPassword"
-        android:autofillHints="password"
-        android:text="mdp"
-        android:layout_marginTop="8dp"/>
+        android:background="@drawable/edittext_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/dialogLoginBtn"
+            android:text="Se connecter"
+            android:textColor="#66FF66"
+            android:textStyle="bold"
+            android:layout_marginVertical="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialogCancelBtn"
+            android:text="Annuler"
+            android:textColor="#FFCC00"
+            android:textStyle="bold"
+            android:layout_marginVertical="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialogDisconnectBtn"
+            android:text="Se déconnecter"
+            android:textColor="#FF6666"
+            android:textStyle="bold"
+            android:layout_marginVertical="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialogCreateAccountBtn"
+            android:text="Créer un compte"
+            android:textColor="#66CCFF"
+            android:textStyle="bold"
+            android:layout_marginVertical="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
 </LinearLayout>

@@ -2,5 +2,5 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background_fragments">#FFFFFF</color>
+    <color name="background_app">#222222</color>
 </resources>
