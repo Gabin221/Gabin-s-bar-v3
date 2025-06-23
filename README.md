@@ -1,7 +1,8 @@
-Gabin's Bar v3
+# Gabin's Bar v3
 
 🍹 Gabin's Bar v3 est une application Android connectée à un backend PHP/MySQL. Elle permet de gérer un bar : prise de commandes, gestion du panier et communication avec un bot Telegram.
-🚀 Fonctionnalités principales
+
+## 🚀 Fonctionnalités principales
 
     Catalogue interactif : boissons par catégories avec scroll horizontal
 
@@ -15,7 +16,7 @@ Gabin's Bar v3
 
     API PHP pour la récupération des données et la gestion des utilisateurs
 
-🛠️ Technologies
+## 🛠️ Technologies
 
     Kotlin (Android)
 
@@ -27,7 +28,7 @@ Gabin's Bar v3
 
     Telegram Bot API
 
-📂 Structure générale
+## 📂 Structure générale
 Côté Android
 
     app/src/main/ : code Kotlin, layouts XML, ressources
@@ -42,7 +43,7 @@ Côté API
 
     Api_gabinsbar/recuperer*.php : endpoints pour les catégories de boissons
 
-⚙️ Installation
+## ⚙️ Installation
 Android
 
 1️⃣ Clone le projet :
@@ -68,7 +69,7 @@ API
 
     POST /Api_gabinsbar/creer_compte.php (pseudo, password)
 
-💡 Sécurité
+## 💡 Sécurité
 
     ⚠️ Prototype : à sécuriser avant toute utilisation réelle
 
@@ -78,7 +79,7 @@ API
 
         Mets en place une authentification robuste
 
-👤 Auteur
+## 👤 Auteur
 
 Gabin Serrurot
 Projet personnel pour l'apprentissage et la démonstration technique.
