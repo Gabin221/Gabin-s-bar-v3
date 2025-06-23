@@ -47,9 +47,9 @@ Côté API
 Android
 
 1️⃣ Clone le projet :
-;;;bash
+```bash
 git clone https://github.com/ton-pseudo/Gabin-s-bar-v3.git
-;;;
+```
 
 2️⃣ Ouvre dans Android Studio
 
@@ -81,8 +81,8 @@ API
 
 ## 👤 Auteur
 
-Gabin Serrurot
-Projet personnel pour l'apprentissage et la démonstration technique.
+Gabin Serrurot  
+Projet personnel pour l'apprentissage et la démonstration technique.  
 📃 Licence
 
 Open source, librement modifiable et réutilisable.
