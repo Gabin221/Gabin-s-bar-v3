@@ -38,48 +38,56 @@
         android:padding="12dp"
         android:layout_marginBottom="16dp"/>
 
-    <LinearLayout
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="end"
-        android:layout_marginTop="8dp">
-
-        <TextView
-            android:id="@+id/dialogLoginBtn"
-            android:text="Se connecter"
-            android:textColor="#66FF66"
-            android:textStyle="bold"
-            android:layout_marginVertical="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/dialogCancelBtn"
-            android:text="Annuler"
-            android:textColor="#FFCC00"
-            android:textStyle="bold"
-            android:layout_marginVertical="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/dialogDisconnectBtn"
-            android:text="Se déconnecter"
-            android:textColor="#FF6666"
-            android:textStyle="bold"
-            android:layout_marginVertical="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        android:columnCount="2"
+        android:layout_marginTop="8dp"
+        android:alignmentMode="alignBounds">
 
         <TextView
             android:id="@+id/dialogCreateAccountBtn"
             android:text="Créer un compte"
             android:textColor="#66CCFF"
             android:textStyle="bold"
-            android:layout_marginVertical="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:gravity="start"
+            android:layout_marginBottom="8dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"/>
+
+        <TextView
+            android:id="@+id/dialogLoginBtn"
+            android:text="Se connecter"
+            android:textColor="#66FF66"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:layout_marginBottom="8dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"/>
+
+        <TextView
+            android:id="@+id/dialogCancelBtn"
+            android:text="Annuler"
+            android:textColor="#FFCC00"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"/>
+
+        <TextView
+            android:id="@+id/dialogDisconnectBtn"
+            android:text="Se déconnecter"
+            android:textColor="#FF6666"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"/>
+
+    </GridLayout>
+
 
 </LinearLayout>
